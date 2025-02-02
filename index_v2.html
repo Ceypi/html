@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moon</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .stars, .shooting-stars, .constellations {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 150px;
+            height: 2px;
+            background: linear-gradient(90deg, white, rgba(255, 255, 255, 0));
+            transform: rotate(45deg);
+            opacity: 0;
+            animation: shoot 3s infinite ease-in-out;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translate(-200px, -200px) rotate(45deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(100vw, 100vh) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .constellation-line {
+            position: absolute;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            transform-origin: top left;
+        }
+
+        .moon-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .moon {
+            max-width: 400px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="shooting-stars"></div>
+    <div class="constellations"></div>
+    <div class="moon-container">
+        <img src="https://raw.githubusercontent.com/Ceypi/html/refs/heads/main/images/moon.webp" alt="Moon" class="moon">
+    </div>
+
+    <script>
+        const starContainer = document.querySelector('.stars');
+        const shootingStarContainer = document.querySelector('.shooting-stars');
+        const constellationContainer = document.querySelector('.constellations');
+
+        const numStars = 100;
+        const numShootingStars = 5;
+
+        // Generate stars
+        for (let i = 0; i < numStars; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.top = `${Math.random() * 100}vh`;
+            star.style.left = `${Math.random() * 100}vw`;
+            star.style.animationDelay = `${Math.random() * 5}s`;
+            starContainer.appendChild(star);
+        }
+
+        // Generate shooting stars
+        for (let i = 0; i < numShootingStars; i++) {
+            const shootingStar = document.createElement('div');
+            shootingStar.classList.add('shooting-star');
+            shootingStar.style.top = `${Math.random() * 50}vh`;
+            shootingStar.style.left = `${Math.random() * 50}vw`;
+            shootingStar.style.animationDelay = `${Math.random() * 10}s`;
+            shootingStarContainer.appendChild(shootingStar);
+        }
+
+        // Generate simple constellation
+        const constellationStars = [
+            { x: 20, y: 30 },
+            { x: 25, y: 35 },
+            { x: 30, y: 28 },
+            { x: 35, y: 40 }
+        ];
+
+        for (let i = 0; i < constellationStars.length - 1; i++) {
+            const line = document.createElement('div');
+            line.classList.add('constellation-line');
+
+            const x1 = constellationStars[i].x;
+            const y1 = constellationStars[i].y;
+            const x2 = constellationStars[i + 1].x;
+            const y2 = constellationStars[i + 1].y;
+
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const length = Math.sqrt(dx * dx + dy * dy);
+
+            line.style.width = `${length}vw`;
+            line.style.height = '1px';
+            line.style.top = `${y1}vh`;
+            line.style.left = `${x1}vw`;
+
+            const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+            line.style.transform = `rotate(${angle}deg)`;
+
+            constellationContainer.appendChild(line);
+        }
+    </script>
+</body>
+</html>

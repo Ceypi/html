@@ -16,7 +16,7 @@
             height: 100vh;
         }
 
-        .stars, .shooting-stars, .constellations {
+        .stars, .constellations {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -39,30 +39,6 @@
             50% { opacity: 1; }
         }
 
-        .shooting-star {
-            position: absolute;
-            width: 150px;
-            height: 2px;
-            background: linear-gradient(90deg, white, rgba(255, 255, 255, 0));
-            transform: rotate(45deg);
-            opacity: 0;
-            animation: shoot 3s infinite ease-in-out;
-        }
-
-        @keyframes shoot {
-            0% {
-                transform: translate(-200px, -200px) rotate(45deg);
-                opacity: 0;
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                transform: translate(100vw, 100vh) rotate(45deg);
-                opacity: 0;
-            }
-        }
-
         .constellation-line {
             position: absolute;
             width: 2px;
@@ -83,7 +59,6 @@
 </head>
 <body>
     <div class="stars"></div>
-    <div class="shooting-stars"></div>
     <div class="constellations"></div>
     <div class="moon-container">
         <img src="https://raw.githubusercontent.com/Ceypi/html/refs/heads/main/images/moon.webp" alt="Moon" class="moon">
@@ -91,11 +66,9 @@
 
     <script>
         const starContainer = document.querySelector('.stars');
-        const shootingStarContainer = document.querySelector('.shooting-stars');
         const constellationContainer = document.querySelector('.constellations');
 
         const numStars = 100;
-        const numShootingStars = 5;
 
         // Generate stars
         for (let i = 0; i < numStars; i++) {
@@ -105,16 +78,6 @@
             star.style.left = `${Math.random() * 100}vw`;
             star.style.animationDelay = `${Math.random() * 5}s`;
             starContainer.appendChild(star);
-        }
-
-        // Generate shooting stars
-        for (let i = 0; i < numShootingStars; i++) {
-            const shootingStar = document.createElement('div');
-            shootingStar.classList.add('shooting-star');
-            shootingStar.style.top = `${Math.random() * 50}vh`;
-            shootingStar.style.left = `${Math.random() * 50}vw`;
-            shootingStar.style.animationDelay = `${Math.random() * 10}s`;
-            shootingStarContainer.appendChild(shootingStar);
         }
 
         // Generate simple constellation

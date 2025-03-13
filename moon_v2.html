@@ -1,127 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moon</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            position: relative;
-        }
-
-        .stars, .constellations {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 0;
-        }
-
-        .star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
-            opacity: 0;
-            animation: twinkle 3s infinite ease-in-out;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
-
-        .constellation-line {
-            position: absolute;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.5);
-            transform-origin: top left;
-        }
-
-        .moon-container {
-            position: relative;
-            z-index: 2;
-        }
-
-        .moon {
-            max-width: 400px;
-            height: auto;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moon</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      position: relative;
+    }
+    .stars, .constellations {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      animation: twinkle 3s infinite ease-in-out;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+    .constellation-line {
+      position: absolute;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.5);
+      transform-origin: top left;
+    }
+    .moon-container {
+      position: relative;
+      z-index: 2;
+    }
+    .moon {
+      max-width: 400px;
+      height: auto;
+    }
+  </style>
 </head>
 <body>
-    <div class="stars"></div>
-    <div class="constellations"></div>
-    <div class="moon-container">
-        <img src="https://raw.githubusercontent.com/Ceypi/html/refs/heads/main/images/moon.webp" alt="Moon" class="moon">
-    </div>
+  <div class="stars"></div>
+  <div class="constellations"></div>
+  <div class="moon-container">
+    <img src="https://raw.githubusercontent.com/Ceypi/html/refs/heads/main/images/moon.webp" alt="Moon" class="moon">
+  </div>
 
-    <script>
-        const starContainer = document.querySelector('.stars');
-        const constellationContainer = document.querySelector('.constellations');
+  <script>
+    const starContainer = document.querySelector('.stars');
+    const constellationContainer = document.querySelector('.constellations');
 
-        const numStars = 100;
-        const moonBoundingBox = { x: 30, y: 35, width: 40, height: 40 }; // Prevent stars in this region
+    const numStars = 100;
+    const starPositions = [];
 
-        // Generate stars
-        for (let i = 0; i < numStars; i++) {
-            let x = Math.random() * 100;
-            let y = Math.random() * 100;
-            
-            if (x > moonBoundingBox.x && x < moonBoundingBox.x + moonBoundingBox.width &&
-                y > moonBoundingBox.y && y < moonBoundingBox.y + moonBoundingBox.height) {
-                continue; // Skip stars in moon area
-            }
-            
-            const star = document.createElement('div');
-            star.classList.add('star');
-            star.style.top = `${y}vh`;
-            star.style.left = `${x}vw`;
-            star.style.animationDelay = `${Math.random() * 5}s`;
-            starContainer.appendChild(star);
-        }
+    // Generate stars (no blocking near the moon image)
+    for (let i = 0; i < numStars; i++) {
+      const x = Math.random() * 100;
+      const y = Math.random() * 100;
+      
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = `${y}vh`;
+      star.style.left = `${x}vw`;
+      star.style.animationDelay = `${Math.random() * 5}s`;
+      starContainer.appendChild(star);
+      
+      starPositions.push({ x, y });
+    }
 
-        // Generate simple constellation
-        const constellationStars = [
-            { x: 10, y: 20 },
-            { x: 15, y: 25 },
-            { x: 20, y: 18 },
-            { x: 25, y: 30 }
-        ];
+    // Select a random subset of stars for the constellation
+    const numConstellationStars = 5;
+    const constellationStars = [];
+    while (constellationStars.length < numConstellationStars) {
+      const index = Math.floor(Math.random() * starPositions.length);
+      const candidate = starPositions[index];
+      // Avoid duplicates
+      if (!constellationStars.includes(candidate)) {
+        constellationStars.push(candidate);
+      }
+    }
 
-        for (let i = 0; i < constellationStars.length - 1; i++) {
-            const line = document.createElement('div');
-            line.classList.add('constellation-line');
+    // Calculate the centroid of the selected stars
+    const centroid = constellationStars.reduce((acc, star) => {
+      return { x: acc.x + star.x / numConstellationStars, y: acc.y + star.y / numConstellationStars };
+    }, { x: 0, y: 0 });
 
-            const x1 = constellationStars[i].x;
-            const y1 = constellationStars[i].y;
-            const x2 = constellationStars[i + 1].x;
-            const y2 = constellationStars[i + 1].y;
+    // Sort the constellation stars by angle from the centroid for a smooth polygon
+    constellationStars.sort((a, b) => {
+      const angleA = Math.atan2(a.y - centroid.y, a.x - centroid.x);
+      const angleB = Math.atan2(b.y - centroid.y, b.x - centroid.x);
+      return angleA - angleB;
+    });
 
-            const dx = x2 - x1;
-            const dy = y2 - y1;
-            const length = Math.sqrt(dx * dx + dy * dy);
+    // Connect stars with lines, closing the loop to form a polygon
+    for (let i = 0; i < constellationStars.length; i++) {
+      const start = constellationStars[i];
+      const end = constellationStars[(i + 1) % constellationStars.length]; // Loop back to the first
 
-            line.style.width = `${length}vw`;
-            line.style.height = '2px';
-            line.style.top = `${y1}vh`;
-            line.style.left = `${x1}vw`;
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      const length = Math.sqrt(dx * dx + dy * dy);
 
-            const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-            line.style.transform = `rotate(${angle}deg)`;
-
-            constellationContainer.appendChild(line);
-        }
-    </script>
+      const line = document.createElement('div');
+      line.classList.add('constellation-line');
+      line.style.width = `${length}vw`;
+      line.style.top = `${start.y}vh`;
+      line.style.left = `${start.x}vw`;
+      
+      const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+      line.style.transform = `rotate(${angle}deg)`;
+      constellationContainer.appendChild(line);
+    }
+  </script>
 </body>
 </html>

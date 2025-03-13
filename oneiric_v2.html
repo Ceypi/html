@@ -3,43 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oneiric Realm</title>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&display=swap" rel="stylesheet">
+    <title>Oneiric Dreamscape</title>
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background: linear-gradient(to bottom, #2e1a47, #120c24);
+            background: radial-gradient(circle at center, #2a1b3d, #0d0818);
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'EB Garamond', serif;
+            font-family: 'Marcellus', serif;
             color: white;
             position: relative;
         }
 
-        .fog {
+        .dreamscape {
             position: absolute;
-            width: 200%;
-            height: 200%;
-            background: url('https://raw.githubusercontent.com/Ceypi/html/main/images/fog.png') repeat;
-            opacity: 0.3;
-            animation: fogMove 30s infinite linear;
+            width: 100%;
+            height: 100%;
+            background: url('https://raw.githubusercontent.com/Ceypi/html/main/images/dreamscape.png') center/cover no-repeat;
+            opacity: 0.7;
+            filter: blur(8px);
         }
 
-        @keyframes fogMove {
-            from { transform: translateX(-10%) translateY(-10%); }
-            to { transform: translateX(10%) translateY(10%); }
+        .floating-islands {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
 
-        .castle {
+        .island {
             position: absolute;
-            bottom: 10%;
-            width: 60vw;
-            max-width: 500px;
+            width: 180px;
+            height: auto;
             opacity: 0.9;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(10px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(10px); }
+        }
+
+        .portal {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8), rgba(255,255,255,0.1));
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(255,255,255,0.5);
+            animation: portalGlow 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes portalGlow {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.2); opacity: 1; }
         }
 
         .loading-container {
@@ -49,9 +71,11 @@
         }
 
         .loading-text {
-            font-size: 26px;
+            font-size: 22px;
             font-style: italic;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            opacity: 0.8;
             animation: fadeInOut 4s infinite alternate;
         }
 
@@ -62,10 +86,29 @@
     </style>
 </head>
 <body>
-    <div class="fog"></div>
+    <div class="dreamscape"></div>
+    <div class="floating-islands"></div>
     <div class="loading-container">
-        <img class="castle" src="https://raw.githubusercontent.com/Ceypi/html/main/images/castle.png" alt="Castle">
-        <p class="loading-text">Entering the Oneiric Realm...</p>
+        <div class="portal"></div>
+        <p class="loading-text">Drifting into the Oneiric Dreamscape...</p>
     </div>
+
+    <script>
+        const islandContainer = document.querySelector('.floating-islands');
+        const islandImages = [
+            'https://raw.githubusercontent.com/Ceypi/html/main/images/island1.png',
+            'https://raw.githubusercontent.com/Ceypi/html/main/images/island2.png'
+        ];
+
+        for (let i = 0; i < 3; i++) {
+            const island = document.createElement('img');
+            island.classList.add('island');
+            island.src = islandImages[i % islandImages.length];
+            island.style.top = `${Math.random() * 50 + 20}vh`;
+            island.style.left = `${Math.random() * 80 + 10}vw`;
+            island.style.animationDuration = `${Math.random() * 3 + 5}s`;
+            islandContainer.appendChild(island);
+        }
+    </script>
 </body>
 </html>

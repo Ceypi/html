@@ -14,6 +14,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            position: relative;
         }
 
         .stars, .constellations {
@@ -35,20 +36,20 @@
         }
 
         @keyframes twinkle {
-            0%, 100% { opacity: 0; }
+            0%, 100% { opacity: 0.2; }
             50% { opacity: 1; }
         }
 
         .constellation-line {
             position: absolute;
-            width: 2px;
+            height: 2px;
             background: rgba(255, 255, 255, 0.5);
             transform-origin: top left;
         }
 
         .moon-container {
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         .moon {
@@ -83,9 +84,9 @@
         // Generate simple constellation
         const constellationStars = [
             { x: 20, y: 30 },
-            { x: 25, y: 35 },
-            { x: 30, y: 28 },
-            { x: 35, y: 40 }
+            { x: 35, y: 40 },
+            { x: 50, y: 35 },
+            { x: 65, y: 45 }
         ];
 
         for (let i = 0; i < constellationStars.length - 1; i++) {
@@ -102,7 +103,7 @@
             const length = Math.sqrt(dx * dx + dy * dy);
 
             line.style.width = `${length}vw`;
-            line.style.height = '1px';
+            line.style.height = '2px';
             line.style.top = `${y1}vh`;
             line.style.left = `${x1}vw`;
 

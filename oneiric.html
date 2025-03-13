@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oneiric</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: radial-gradient(circle at top, #342054, #120c24);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .floating-symbols {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .symbol {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 3rem;
+            animation: float 5s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(10px) rotate(0deg); opacity: 0.5; }
+            50% { transform: translateY(-10px) rotate(10deg); opacity: 1; }
+            100% { transform: translateY(10px) rotate(0deg); opacity: 0.5; }
+        }
+
+        .loading-container {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-text {
+            font-size: 24px;
+            letter-spacing: 2px;
+            animation: fadeIn 3s infinite alternate;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .orb {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at center, #ffffff, rgba(255, 255, 255, 0));
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            animation: glow 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes glow {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.2); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-symbols"></div>
+    <div class="loading-container">
+        <div class="orb"></div>
+        <p class="loading-text">Entering Oneiric...</p>
+    </div>
+
+    <script>
+        const symbols = ['✡', '✧', '✰', '⚝', '✦']; // Mystical symbols
+        const container = document.querySelector('.floating-symbols');
+
+        for (let i = 0; i < 10; i++) {
+            const symbol = document.createElement('div');
+            symbol.classList.add('symbol');
+            symbol.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            symbol.style.left = `${Math.random() * 100}vw`;
+            symbol.style.top = `${Math.random() * 100}vh`;
+            symbol.style.animationDuration = `${Math.random() * 3 + 3}s`;
+            container.appendChild(symbol);
+        }
+    </script>
+</body>
+</html>

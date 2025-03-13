@@ -23,6 +23,7 @@
             height: 100%;
             top: 0;
             left: 0;
+            z-index: 0;
         }
 
         .star {
@@ -70,23 +71,32 @@
         const constellationContainer = document.querySelector('.constellations');
 
         const numStars = 100;
+        const moonBoundingBox = { x: 30, y: 35, width: 40, height: 40 }; // Prevent stars in this region
 
         // Generate stars
         for (let i = 0; i < numStars; i++) {
+            let x = Math.random() * 100;
+            let y = Math.random() * 100;
+            
+            if (x > moonBoundingBox.x && x < moonBoundingBox.x + moonBoundingBox.width &&
+                y > moonBoundingBox.y && y < moonBoundingBox.y + moonBoundingBox.height) {
+                continue; // Skip stars in moon area
+            }
+            
             const star = document.createElement('div');
             star.classList.add('star');
-            star.style.top = `${Math.random() * 100}vh`;
-            star.style.left = `${Math.random() * 100}vw`;
+            star.style.top = `${y}vh`;
+            star.style.left = `${x}vw`;
             star.style.animationDelay = `${Math.random() * 5}s`;
             starContainer.appendChild(star);
         }
 
         // Generate simple constellation
         const constellationStars = [
-            { x: 20, y: 30 },
-            { x: 35, y: 40 },
-            { x: 50, y: 35 },
-            { x: 65, y: 45 }
+            { x: 10, y: 20 },
+            { x: 15, y: 25 },
+            { x: 20, y: 18 },
+            { x: 25, y: 30 }
         ];
 
         for (let i = 0; i < constellationStars.length - 1; i++) {

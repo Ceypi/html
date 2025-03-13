@@ -37,15 +37,33 @@
       0%, 100% { opacity: 0.2; }
       50% { opacity: 1; }
     }
+    /* Constellation lines */
     .constellation-line {
       position: absolute;
-      height: 2px;
-      background: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.6);
       transform-origin: top left;
+      z-index: 1;
+    }
+    /* Outline (convex hull) lines - dotted */
+    .constellation-hull-line {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.3);
+      transform-origin: top left;
+      z-index: 1;
+      /* Dotted effect */
+      background-image: radial-gradient(white 20%, transparent 20%);
+      background-size: 4px 4px;
+      background-repeat: repeat-x;
+    }
+    /* Highlighted constellation star */
+    .constellation-star {
+      position: absolute;
+      border-radius: 50%;
+      z-index: 2; /* above lines */
     }
     .moon-container {
       position: relative;
-      z-index: 2; /* Above stars and lines */
+      z-index: 3; /* Above everything else */
     }
     .moon {
       max-width: 400px;
@@ -68,19 +86,21 @@
     const starContainer = document.querySelector(".stars");
     const constellationContainer = document.querySelector(".constellations");
 
-    const numStars = 150;         // Total stars in the background
-    const clusterSize = 7;        // Number of stars in the constellation
-    const maxDistance = 15;       // How close (in 'vw'/'vh' space) stars must be to form a cluster
+    const numStars = 150;         // total background stars
+    const clusterSize = 7;        // how many stars form the constellation
+    const maxDistance = 15;       // how close (vw/vh) stars must be to "cluster"
+    const lineThickness = 0.15;   // thickness (vw) for MST lines
+    const hullThickness = 0.1;    // thickness (vw) for hull lines
+    const starGlow = 8;          // glow radius for constellation stars
 
-    // Store star positions here
+    // We'll store the background star positions here
     const starPositions = [];
 
-    // Generate random stars across entire background
+    // 1) Generate random background stars
     for (let i = 0; i < numStars; i++) {
       const x = Math.random() * 100;
       const y = Math.random() * 100;
 
-      // Create DOM element for each star
       const star = document.createElement("div");
       star.classList.add("star");
       star.style.top = `${y}vh`;
@@ -88,7 +108,6 @@
       star.style.animationDelay = `${Math.random() * 5}s`;
       starContainer.appendChild(star);
 
-      // Save position in an array for later use
       starPositions.push({ x, y });
     }
 
@@ -107,20 +126,14 @@
       }
     }
 
-    /**
-     * Attempt to find a "cluster" of stars near a random center.
-     * 1) Pick a random center from starPositions
-     * 2) Find all stars within 'maxDistance'
-     * 3) Shuffle & pick 'clusterSize' from those
-     * If we fail after a few tries, just pick any random subset.
-     */
+    // Pick a cluster of stars near a random center
     function getRandomCluster(starPositions, clusterSize, maxDist) {
       const attempts = 50;
       for (let attempt = 0; attempt < attempts; attempt++) {
         const centerIndex = Math.floor(Math.random() * starPositions.length);
         const centerStar = starPositions[centerIndex];
 
-        // Gather all stars within maxDist
+        // gather all stars within maxDist
         const closeStars = starPositions.filter(
           (s) => getDistance(s, centerStar) <= maxDist
         );
@@ -130,29 +143,25 @@
           return closeStars.slice(0, clusterSize);
         }
       }
-      // Fallback: just pick any random subset
+      // fallback: pick any random subset
       const temp = [...starPositions];
       shuffle(temp);
       return temp.slice(0, clusterSize);
     }
 
-    /**
-     * Build MST (Prim's algorithm) for a given set of star positions
-     * Returns an array of edges: {start: {x,y}, end: {x,y}}
-     */
+    // Build MST (Prim's algorithm) from a set of points
     function buildMST(stars) {
       const edges = [];
       const inTree = new Set();
       // Start with the first star
       inTree.add(0);
 
-      // While not all in the tree
       while (inTree.size < stars.length) {
         let bestDist = Infinity;
         let bestStart = -1;
         let bestEnd = -1;
 
-        // For each star already in MST, find the closest star not in MST
+        // among the stars in the tree, find the closest star not in the tree
         inTree.forEach((i) => {
           for (let j = 0; j < stars.length; j++) {
             if (!inTree.has(j)) {
@@ -166,29 +175,80 @@
           }
         });
 
-        // Add that edge
         edges.push({ start: stars[bestStart], end: stars[bestEnd] });
         inTree.add(bestEnd);
       }
       return edges;
     }
 
-    // 1) Get a cluster of stars
+    // Compute the convex hull (Graham Scan) for a set of points
+    function convexHull(points) {
+      // Make a shallow copy and sort by y, then x
+      const pts = [...points].sort((a, b) => (a.y === b.y ? a.x - b.x : a.y - b.y));
+
+      // A helper function to check the orientation of the turn
+      function cross(o, a, b) {
+        return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+      }
+
+      // Build lower hull
+      const lower = [];
+      for (let p of pts) {
+        while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) {
+          lower.pop();
+        }
+        lower.push(p);
+      }
+
+      // Build upper hull
+      const upper = [];
+      for (let i = pts.length - 1; i >= 0; i--) {
+        const p = pts[i];
+        while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) {
+          upper.pop();
+        }
+        upper.push(p);
+      }
+
+      // Concatenate lower + upper hull to get full hull
+      // The last element of each list is repeated at the start of the other list
+      lower.pop();
+      upper.pop();
+      const hull = lower.concat(upper);
+      return hull;
+    }
+
+    // 2) Pick a cluster of stars
     const constellationStars = getRandomCluster(starPositions, clusterSize, maxDistance);
 
-    // 2) Build MST from these stars
+    // 3) Highlight the constellation stars (bigger, glowing)
+    constellationStars.forEach(({ x, y }) => {
+      const bigStar = document.createElement("div");
+      bigStar.classList.add("constellation-star");
+      // style them bigger + glow
+      bigStar.style.width = `6px`;
+      bigStar.style.height = `6px`;
+      bigStar.style.top = `${y}vh`;
+      bigStar.style.left = `${x}vw`;
+      bigStar.style.background = `white`;
+      bigStar.style.boxShadow = `0 0 ${starGlow}px rgba(255, 255, 255, 0.8)`;
+      constellationContainer.appendChild(bigStar);
+    });
+
+    // 4) Build MST from these stars
     const mstEdges = buildMST(constellationStars);
 
-    // 3) Draw each MST edge
-    mstEdges.forEach((edge) => {
-      const { start, end } = edge;
+    // 5) Draw MST lines
+    mstEdges.forEach(({ start, end }) => {
       const dx = end.x - start.x;
       const dy = end.y - start.y;
       const length = Math.sqrt(dx * dx + dy * dy);
 
       const line = document.createElement("div");
       line.classList.add("constellation-line");
+      // Use 'vw' for width and a constant thickness
       line.style.width = `${length}vw`;
+      line.style.height = `${lineThickness}vw`;
       line.style.top = `${start.y}vh`;
       line.style.left = `${start.x}vw`;
 
@@ -197,6 +257,31 @@
 
       constellationContainer.appendChild(line);
     });
+
+    // 6) Draw the convex hull as a dotted outline
+    if (constellationStars.length >= 3) {
+      const hull = convexHull(constellationStars);
+      // Connect consecutive hull points + wrap around
+      for (let i = 0; i < hull.length; i++) {
+        const start = hull[i];
+        const end = hull[(i + 1) % hull.length];
+        const dx = end.x - start.x;
+        const dy = end.y - start.y;
+        const length = Math.sqrt(dx * dx + dy * dy);
+
+        const hullLine = document.createElement("div");
+        hullLine.classList.add("constellation-hull-line");
+        hullLine.style.width = `${length}vw`;
+        hullLine.style.height = `${hullThickness}vw`;
+        hullLine.style.top = `${start.y}vh`;
+        hullLine.style.left = `${start.x}vw`;
+
+        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+        hullLine.style.transform = `rotate(${angle}deg)`;
+
+        constellationContainer.appendChild(hullLine);
+      }
+    }
   </script>
 </body>
 </html>

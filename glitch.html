@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oneiric</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0a0a0a;
+      color: #fff;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .glitch-container {
+      text-align: center;
+    }
+    .glitch {
+      font-size: 64px;
+      position: relative;
+      animation: glitch 2s infinite;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: 'ONEIRIC';
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0.8;
+    }
+    .glitch::before {
+      color: #ff00c1;
+      z-index: -1;
+      clip: rect(0, 900px, 0, 0);
+      animation: glitchBefore 2s infinite;
+    }
+    .glitch::after {
+      color: #00fff9;
+      z-index: -2;
+      clip: rect(0, 900px, 0, 0);
+      animation: glitchAfter 2s infinite;
+    }
+    @keyframes glitch {
+      0% { transform: none; }
+      20% { transform: skew(0.5deg, -0.5deg); }
+      40% { transform: skew(-0.5deg, 0.5deg); }
+      60% { transform: skew(0.5deg, -0.5deg); }
+      80% { transform: skew(-0.5deg, 0.5deg); }
+      100% { transform: none; }
+    }
+    @keyframes glitchBefore {
+      0% { clip: rect(10px, 9999px, 20px, 0); transform: translate(-2px, -2px); }
+      33% { clip: rect(20px, 9999px, 30px, 0); transform: translate(2px, 2px); }
+      66% { clip: rect(30px, 9999px, 40px, 0); transform: translate(-2px, 2px); }
+      100% { clip: rect(10px, 9999px, 20px, 0); transform: translate(2px, -2px); }
+    }
+    @keyframes glitchAfter {
+      0% { clip: rect(40px, 9999px, 50px, 0); transform: translate(2px, 2px); }
+      33% { clip: rect(50px, 9999px, 60px, 0); transform: translate(-2px, -2px); }
+      66% { clip: rect(60px, 9999px, 70px, 0); transform: translate(2px, -2px); }
+      100% { clip: rect(40px, 9999px, 50px, 0); transform: translate(-2px, 2px); }
+    }
+    .loading {
+      margin-top: 20px;
+      font-size: 24px;
+      animation: fadeInOut 3s infinite;
+    }
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glitch-container">
+    <div class="glitch">ONEIRIC</div>
+    <div class="loading">Loading your dream...</div>
+  </div>
+</body>
+</html>

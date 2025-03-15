@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oneiric</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .loader-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .loader-title {
+      font-size: 48px;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+    .loader-progress {
+      width: 300px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #0ff, #f0f);
+      animation: loading 5s linear forwards;
+    }
+    @keyframes loading {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    .loader-text {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div class="loader-container">
+    <div class="loader-title">Oneiric</div>
+    <div class="loader-progress">
+      <div class="progress-bar"></div>
+    </div>
+    <div class="loader-text">Loading Digital Dream...</div>
+  </div>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const particleCount = 100;
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.radius = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if(this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if(this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fill();
+      }
+    }
+    
+    function initParticles() {
+      particles = [];
+      for(let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+    
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { 
+        p.update(); 
+        p.draw(); 
+      });
+      requestAnimationFrame(animate);
+    }
+    
+    initParticles();
+    animate();
+  </script>
+</body>
+</html>

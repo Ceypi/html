@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oneiric - Melodic Clouds</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lucida Console', monospace;
+      /* Initial background gradient */
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      animation: bgAnimation 15s ease infinite;
+    }
+
+    /* Background gradient animation */
+    @keyframes bgAnimation {
+      0%   { background: linear-gradient(135deg, #1e3c72, #2a5298); }
+      50%  { background: linear-gradient(135deg, #2a5298, #1e3c72); }
+      100% { background: linear-gradient(135deg, #1e3c72, #2a5298); }
+    }
+
+    /* Cloud elements */
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      filter: blur(15px);
+      animation: floatClouds 20s linear infinite;
+    }
+    /* Vary cloud sizes, positions, and speeds */
+    .cloud:nth-child(1) {
+      width: 200px;
+      height: 200px;
+      top: 10%;
+      left: 20%;
+      animation-duration: 25s;
+    }
+    .cloud:nth-child(2) {
+      width: 150px;
+      height: 150px;
+      top: 30%;
+      left: 70%;
+      animation-duration: 30s;
+    }
+    .cloud:nth-child(3) {
+      width: 250px;
+      height: 250px;
+      top: 60%;
+      left: 40%;
+      animation-duration: 35s;
+    }
+    .cloud:nth-child(4) {
+      width: 100px;
+      height: 100px;
+      top: 80%;
+      left: 80%;
+      animation-duration: 20s;
+    }
+    .cloud:nth-child(5) {
+      width: 180px;
+      height: 180px;
+      top: 50%;
+      left: 10%;
+      animation-duration: 28s;
+    }
+
+    /* Cloud movement animation */
+    @keyframes floatClouds {
+      0% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(30px) translateY(-20px); }
+      100% { transform: translateX(0) translateY(0); }
+    }
+
+    /* Title styling */
+    .title {
+      position: relative;
+      z-index: 1;
+      font-size: 64px;
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+      animation: pulseTitle 3s ease-in-out infinite;
+    }
+
+    /* Title pulse animation */
+    @keyframes pulseTitle {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating cloud elements -->
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+
+  <!-- Centered title -->
+  <div class="title">ONEIRIC</div>
+</body>
+</html>

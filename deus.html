@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deus Background</title>
+<style>
+  /* Full-screen background */
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #0a0a0a, #111111);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Particle styling */
+  .particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(0, 255, 255, 0.6);
+    border-radius: 50%;
+    filter: blur(4px);
+    animation: float 20s linear infinite, pulse 4s ease-in-out infinite;
+  }
+
+  /* Slightly different sizes and speeds */
+  .particle:nth-child(1) { width: 4px; height: 4px; animation-duration: 18s; }
+  .particle:nth-child(2) { width: 6px; height: 6px; animation-duration: 22s; }
+  .particle:nth-child(3) { width: 8px; height: 8px; animation-duration: 25s; }
+  .particle:nth-child(4) { width: 5px; height: 5px; animation-duration: 20s; }
+  .particle:nth-child(5) { width: 7px; height: 7px; animation-duration: 23s; }
+
+  /* Floating motion */
+  @keyframes float {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(30px, -20px); }
+    50% { transform: translate(-20px, 30px); }
+    75% { transform: translate(20px, 10px); }
+    100% { transform: translate(0, 0); }
+  }
+
+  /* Soft opacity pulse for ethereal effect */
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Optional connecting lines between particles (pseudo-elements) */
+  .particle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 255, 255, 0.05);
+    transform: translate(-50%, -50%);
+  }
+
+</style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particle" style="top:10%; left:20%;"></div>
+<div class="particle" style="top:30%; left:70%;"></div>
+<div class="particle" style="top:50%; left:50%;"></div>
+<div class="particle" style="top:70%; left:30%;"></div>
+<div class="particle" style="top:80%; left:80%;"></div>
+
+</body>
+</html>

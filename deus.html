@@ -5,75 +5,95 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Deus Background</title>
 <style>
-  /* Full-screen background */
-  body {
+  body, html {
     margin: 0;
     padding: 0;
-    height: 100vh;
     overflow: hidden;
-    background: radial-gradient(circle at center, #0a0a0a, #111111);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+    background: #0a0a0a;
   }
-
-  /* Particle styling */
-  .particle {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background: rgba(0, 255, 255, 0.6);
-    border-radius: 50%;
-    filter: blur(4px);
-    animation: float 20s linear infinite, pulse 4s ease-in-out infinite;
+  canvas {
+    display: block;
   }
-
-  /* Slightly different sizes and speeds */
-  .particle:nth-child(1) { width: 4px; height: 4px; animation-duration: 18s; }
-  .particle:nth-child(2) { width: 6px; height: 6px; animation-duration: 22s; }
-  .particle:nth-child(3) { width: 8px; height: 8px; animation-duration: 25s; }
-  .particle:nth-child(4) { width: 5px; height: 5px; animation-duration: 20s; }
-  .particle:nth-child(5) { width: 7px; height: 7px; animation-duration: 23s; }
-
-  /* Floating motion */
-  @keyframes float {
-    0% { transform: translate(0, 0); }
-    25% { transform: translate(30px, -20px); }
-    50% { transform: translate(-20px, 30px); }
-    75% { transform: translate(20px, 10px); }
-    100% { transform: translate(0, 0); }
-  }
-
-  /* Soft opacity pulse for ethereal effect */
-  @keyframes pulse {
-    0%, 100% { opacity: 0.6; }
-    50% { opacity: 0.3; }
-  }
-
-  /* Optional connecting lines between particles (pseudo-elements) */
-  .particle::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 1px solid rgba(0, 255, 255, 0.05);
-    transform: translate(-50%, -50%);
-  }
-
 </style>
 </head>
 <body>
+<canvas id="deusCanvas"></canvas>
 
-<!-- Floating particles -->
-<div class="particle" style="top:10%; left:20%;"></div>
-<div class="particle" style="top:30%; left:70%;"></div>
-<div class="particle" style="top:50%; left:50%;"></div>
-<div class="particle" style="top:70%; left:30%;"></div>
-<div class="particle" style="top:80%; left:80%;"></div>
+<script>
+const canvas = document.getElementById('deusCanvas');
+const ctx = canvas.getContext('2d');
 
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
+
+const particleCount = 60;
+const particles = [];
+
+// Particle class
+class Particle {
+  constructor() {
+    this.x = Math.random() * width;
+    this.y = Math.random() * height;
+    this.radius = 2 + Math.random() * 3;
+    this.vx = (Math.random() - 0.5) * 0.5; // slow horizontal drift
+    this.vy = (Math.random() - 0.5) * 0.5; // slow vertical drift
+  }
+  move() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if(this.x < 0) this.x = width;
+    if(this.x > width) this.x = 0;
+    if(this.y < 0) this.y = height;
+    if(this.y > height) this.y = 0;
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0,255,255,0.7)";
+    ctx.fill();
+  }
+}
+
+// Initialize particles
+for(let i = 0; i < particleCount; i++){
+  particles.push(new Particle());
+}
+
+// Draw connections (fusion effect)
+function connectParticles() {
+  for(let i = 0; i < particleCount; i++){
+    for(let j = i+1; j < particleCount; j++){
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(dist < 120){ // only connect close particles
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(0,255,255,${1 - dist/120})`;
+        ctx.lineWidth = 1;
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animate() {
+  ctx.clearRect(0,0,width,height);
+  for(const p of particles){
+    p.move();
+    p.draw();
+  }
+  connectParticles();
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+window.addEventListener('resize', () => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+});
+</script>
 </body>
 </html>
